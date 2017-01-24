@@ -1,6 +1,8 @@
 
 #include "hx711.h"
 
+long offset=0;
+
 void lowPassTest(const float alpha[],int n) {
   int i;
   static int initSize = 0;  
@@ -53,11 +55,18 @@ void lowPassTest(const float alpha[],int n) {
       //TODO
     }
 
-    printf("%ld",(long)reading[i]/100);
-    printf(" ");
-    printf(isStable?"*":" ");
+    //printf("%ld",(long)reading[i] - offset);
+    //printf(" ");
+    //printf(isStable?"*":" ");
       
-    if (i<n-1) { printf("\t"); } else { printf("\n");}
+    if (i<n-1) { 
+        //printf("\t"); 
+    } else {
+        if(isStable){
+            printf("%ld",(long)reading[i] - offset);
+            printf("\n");
+        }
+    }
   }
 }
 
@@ -65,6 +74,10 @@ int main(int argc, char **argv) {
 
   initHX711();
 
+  if (argc == 2) {
+   offset = atol(argv[1]);
+  }
+  
   while (1==1) {
      lowPassTest((const float[]){1, 0.50, 0.20 , 0.1},4);
   } 
